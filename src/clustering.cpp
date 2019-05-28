@@ -3,29 +3,29 @@
 
 int KMedoids::getNearestClusterId(int pointId)
 {
-	double min = data[pointId][ clusters[0].centroid_id ];
-	int result = 0;
-	for(int i = 1; i < K; i++)
-	{
-		if (min > data[pointId][ clusters[i].centroid_id ])
-		{
-			min = data[pointId][ clusters[i].centroid_id ];
-			result = i;
-		}
-	}
-	return result;
+    double min = data[pointId][ clusters[0].centroid_id ];
+    int result = 0;
+    for(int i = 1; i < K; i++)
+    {
+        if (min > data[pointId][ clusters[i].centroid_id ])
+        {
+            min = data[pointId][ clusters[i].centroid_id ];
+            result = i;
+        }
+    }
+    return result;
 }
 
 
 void KMedoids::run()
 {
-    printf("max iters %d\n",iters);
+//    printf("max iters %d\n",iters);
     vector<int> previous_ids = cluster_ids; 
     calculate_id();
     int iter = 0;
     while(iter++ < iters && previous_ids != cluster_ids)
     {
-        printf("iter %d\n",iter);
+ //       printf("iter %d\n",iter);
         previous_ids = cluster_ids;
         calculate_id(); 
     }
@@ -37,13 +37,16 @@ void KMedoids::run()
     double min_id = 0;
     for(int i = 0; i < clusters.size(); i++)
     {
-        printf("number of samples in cluster %d: %d\n",i,clusters[i].points_id.size());
+ //       printf("number of samples in cluster %d: %d\n",i,clusters[i].points_id.size());
         centroid_ids.push_back( clusters[i].centroid_id );
         double sum = 0.0;
         for(int j = 0; j < clusters.size(); j++)
+        {
+            //sum += data[ clusters[i].centroid_id ][clusters[j].centroid_id];            
             //sum += pow(data[ clusters[i].centroid_id ][clusters[j].centroid_id],2);
             sum += exp(data[ clusters[i].centroid_id ][clusters[j].centroid_id]);
-        
+        }
+
         if( min_dist > sum || min_dist == 0)
         {
             min_dist = sum;
@@ -59,7 +62,7 @@ void KMedoids::run()
 
 void KMedoids::calculate_id()
 {
-	int n = data.size();
+    int n = data.size();
     for(int i = 0; i < clusters.size(); i++)
         clusters[i].points_id.clear();
 
@@ -69,25 +72,27 @@ void KMedoids::calculate_id()
         cluster_ids[i] = getNearestClusterId(i);
         clusters[ cluster_ids[i] ].points_id.push_back(i);
     }  
-	//recalculate the center of each cluster
+    //recalculate the center of each cluster
     for(int i = 0; i < clusters.size(); i++)
     {
-    	double min_dist = 0.0;
-    	double min_id = 0;
-    	for(int j = 0; j < clusters[i].points_id.size(); j++)
-    	{
-    		double sum = 0.0;
-    		for(int k = 0; k < clusters[i].points_id.size(); k++)
-                sum += pow(data[clusters[i].points_id[j]][clusters[i].points_id[k]],2);
-    			//sum += exp(data[clusters[i].points_id[j]][clusters[i].points_id[k]]);
-    		
-    		if( min_dist > sum || min_dist == 0.0)
-    		{
-    			min_dist = sum;
-    			min_id = clusters[i].points_id[j];
-    		}
-    	}
-    	clusters[i].centroid_id = min_id;
+        double min_dist = 0.0;
+        double min_id = 0;
+        for(int j = 0; j < clusters[i].points_id.size(); j++)
+        {
+            double sum = 0.0;
+            for(int k = 0; k < clusters[i].points_id.size(); k++)
+            {
+                //sum += data[clusters[i].points_id[j]][clusters[i].points_id[k]];
+               // sum += pow(data[clusters[i].points_id[j]][clusters[i].points_id[k]],2);
+                sum += exp(data[clusters[i].points_id[j]][clusters[i].points_id[k]]);
+            }
+            if( min_dist > sum || min_dist == 0.0)
+            {
+                min_dist = sum;
+                min_id = clusters[i].points_id[j];
+            }
+        }
+        clusters[i].centroid_id = min_id;
     }
  
     return;
@@ -137,61 +142,64 @@ int max_index(std::vector<double> v, std::vector<int> existing_index)
 //input: similarity matrix with diemsnion n*n
 vector<int> SubtracitveCluster::fit(const vector<vector<double>> &data)
 {
-	int i, j, n = data.size();
-	vector<int> centroids;
-	vector<double> potential_values(n,0.0);
+    int i, j, n = data.size();
+    vector<int> centroids;
+    vector<double> potential_values(n,0.0);
 
     for(i = 0; i < n; i++)
     {
-    	double mountain_coefficient = 0.0;
-    	for( j = 0; j < n; j++)
-    		mountain_coefficient += exp(-alpha*data[i][j]);
+        double mountain_coefficient = 0.0;
+        for( j = 0; j < n; j++)
+            mountain_coefficient += exp(-alpha*data[i][j]);
 
-    	potential_values[i] = mountain_coefficient;	 
+        potential_values[i] = mountain_coefficient;  
     }
 
     int current_centroid = max_index(potential_values);
     int max_clusters =   0.25*sqrt(n) > 4 ? 0.15*sqrt(n) : 4;
     double threshold = 0.7 * potential_values[current_centroid];
 
+
+
     while(potential_values[current_centroid] >= threshold && centroids.size() <= max_clusters)
     {
-    	for(i = 0; i < n; i++)
-    	{
-    		if (find(centroids.begin(),centroids.end(),i) == centroids.end() )  //ith point is not in centroid set
-    			potential_values[i] -= exp(-alpha*data[i][current_centroid]);
-    	}	
-    	current_centroid = max_index(potential_values,centroids);
-    	centroids.push_back(current_centroid);
+
+        for(i = 0; i < n; i++)
+        {
+            if (find(centroids.begin(),centroids.end(),i) == centroids.end() )  //ith point is not in centroid set
+                potential_values[i] -= exp(-beta*data[i][current_centroid]);
+        }   
+        current_centroid = max_index(potential_values,centroids);
+        centroids.push_back(current_centroid);
     }
     return centroids;
 }
 
 void KMedoids::cluster_result(string result)
 {
-	if( list.size() != cluster_ids.size() )
-	{ 
-		printf("error, size of input matrix and list doesn't match\n");
-		return;
-	}
+    if( list.size() != cluster_ids.size() )
+    { 
+        printf("error, size of input matrix and list doesn't match\n");
+        return;
+    }
 
-	if(result == "")
-		result = "ECCResult";
+    if(result == "")
+        result = "ECCResult";
 
-	ofstream fp;
-	fp.open((result+"_cluster.txt").c_str());
+    ofstream fp;
+    fp.open((result+"_cluster.txt").c_str());
 
-	fp  << final_id << ' ';
-	for(int i = 0; i < clusters.size(); i++)
-		fp << clusters[i].centroid_id <<  ' ';
-	fp << "\n";
-
-
-	for(int i = 0; i < list.size(); i++)
-		fp << list[i] << ' ' << cluster_ids[i] << "\n";
+    fp  << final_id << ' ';
+    for(int i = 0; i < clusters.size(); i++)
+        fp << clusters[i].centroid_id <<  ' ';
+    fp << "\n";
 
 
-	fp.close();
+    for(int i = 0; i < list.size(); i++)
+        fp << list[i] << ' ' << cluster_ids[i] << "\n";
+
+
+    fp.close();
 }
 
 void KMedoids::sequential_result(string result)

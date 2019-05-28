@@ -1,5 +1,7 @@
 #include <fstream>
 #include <cstdint>
+#include <float.h>
+#include "ctpl_stl.h"
 #include "processor.h"
 #define buff_size 1 << 20
 
@@ -31,58 +33,104 @@ void Processor::pro(char *input, char *output)
 } **/
 
 
-void Processor::read_src_list(char *src_fp)
+void process_files(const vector<string> &list, int start, int end )
 {
-	FILE *file = my_fopen(src_fp,"r");
-	char file_name[256], temp[256];
-	char *buff = new char[buff_size];
-	string suffix = ".msh";
 	ifstream fin;
 	ofstream fout;
-
-	while (fscanf(file,"%s", file_name) != EOF )
+	string file_name;
+	for(int i = start; i < end; i++)
 	{
-		fin.open(file_name,ifstream::binary);
+		file_name = list[i];
+		char *buff = new char[buff_size];
+		fin.open(file_name.c_str(),ifstream::binary);
 		fin.seekg(0, fin.end);
-
 		if( fin.tellg() <= buff_size)
 		{
-			src_map.insert( pair<string,string>(string(file_name),string(file_name)) );		
-			v1.push_back(string(file_name));
-			v2.push_back(string(file_name));
+			v1[i] =  string(file_name);
+			v2[i] = string(file_name);
 		}
 		else
 		{
+			v1[i] = file_name;
+			v2[i] = "tmp_" + file_name;
 			fin.seekg(0, fin.beg);
-			sprintf(temp,"tmp_%s",file_name);
+			
 			fin.read(buff, buff_size);
-			fout.open(temp,ifstream::binary);
+			fout.open(v2[i].c_str(),ifstream::binary);
 			fout.write(buff,buff_size);
 			fout.close();
-			src_map.insert( pair<string,string>(string(file_name),string(temp)) );
-			v1.push_back(string(file_name));
-			v2.push_back(string(temp));
 		}
 		fin.close();
+		delete[] buff;
+	}
+}
+
+void sketch_files(const vector<string> &list, int start, int end )
+{
+	mash::CommandSketch *cs = new mash::CommandSketch();
+
+	for(int i = start; i < end; i++)
+		cs->run(list[i]);
+
+	delete cs;
+}
+
+
+void Processor::read_src_list(char *src_fp,int thread_number)
+{
+	char file_name[256];
+	vector<string> list;
+	FILE *file=my_fopen(src_fp,"r");;
+	int file_num = 0;
+	while (fscanf(file,"%s", file_name) != EOF)
+	{
+		list.push_back(string(file_name));
+		v1.push_back("");
+		v2.push_back("");
+		++file_num;
+	}
+	std::cout << "Number of lines in text file: " << file_num << endl;
+	fseek(file, 0, SEEK_SET);
+
+	string suffix = ".msh";
+	int count = 0;				 
+
+	thread *threads[thread_number];
+	int start = 0, task_number = list.size();
+	int end = start;
+	int avg_task = task_number/thread_number;
+	int moduler = task_number%thread_number;
+
+	for (int i = 0; i < thread_number; i++)
+	{
+		end +=  i < moduler ? avg_task+1 : avg_task;
+		threads[i] = new thread(&process_files,list,start,end);
+		start = end;
+	}
+
+	for (int i = 0; i < thread_number; i++)
+	{
+		threads[i]->join();
+		delete threads[i];
 	}
 	printf("begin sketch\n");
-	
-/**	for(int i = 0; i < v1.size(); i++)
-	{
-		printf("%d\n",i);
-		printf("%s\n",v1[i].c_str());
-		v1.push_back(v1[i]);
-		v2.push_back(v2[i]);
-	}
-**/
-	//	for(map<string,string>::iterator it = src_map.begin(); it != src_map.end(); it++)
-	//  cs->run(it->second);
-	mash::CommandSketch *cs = new mash::CommandSketch();	
-	for(int i = 0; i < v2.size(); i++)
-		cs->run(v2[i]);
 
+	start =0;
+	end = start;
+	for (int i = 0; i < thread_number; i++)
+	{
+		end +=  i < moduler ? avg_task+1 : avg_task;
+		threads[i] = new thread(&sketch_files,v2,start,end);
+		start = end;
+	}
+
+	for (int i = 0; i < thread_number; i++)
+	{
+		threads[i]->join();
+		delete threads[i];
+	}	
 	fclose(file);
-	delete[] buff;
+
 	return;
 }
 
@@ -94,7 +142,7 @@ vector<string> Processor::generate_list()
 void normalize(vector<vector<double>> &vv)
 {
 	int i,j,n = vv.size();
-	double min = vv[0][0],max = vv[0][0];
+	double min = vv[0][0],max = DBL_MIN;
     for(i = 0; i < n; i++)
     {
     	for( j = 0; j < n; j++)
@@ -112,28 +160,6 @@ void normalize(vector<vector<double>> &vv)
     	for( j = 0; j < n; j++)
     		vv[i][j] = min + (vv[i][j] - min)/interval;
     }
-}
-
-
-void Processor::row_computation(vector<vector<double>> &vv, int i)
-{
-	/**
-	int j,n = vv.size();
-	double dist;
-	string suffix = ".msh";
-	mash::CommandDistance *cd = new mash::CommandDistance();
-	printf("new %dth row\n",i);	
-	map<string,string>::iterator it = src_map.begin();
-    for( j = i+1; j < n; j++)
-    {
-    printf("%s and %s\n",(next(it,i)->second).c_str(), (next(it,j)->second).c_str());
-   	    printf("%d %d\n",i,j);		
-   		cd->run(next(it,i)->second+suffix,next(it,j)->second+suffix,&dist);
-	  	vv[i][j] = dist;
- 	  	vv[j][i] = dist;	  		
-    }
-    delete cd;	
-    **/
 }
 
 

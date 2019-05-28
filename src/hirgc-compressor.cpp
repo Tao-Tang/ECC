@@ -72,22 +72,8 @@ void Compressor::cluster_compress()
 		sprintf(cmd,"tar -cf %s.tar -C %s .",folder_buffer,folder_buffer);
 		system(cmd);		
 		//bsc compression
-		spring::bsc::BSC_compress( (string(folder_buffer)+".tar").c_str(), (string(folder_buffer)+".tar.bsc").c_str() );
-
-		/**
-		sprintf(folder_buffer,"%s_ref",ref_name.c_str());
-		sprintf(cmd,"mkdir %s",folder_buffer);
-		system(cmd);                
-		sprintf(cmd,"mv *_ref_%s %s",ref_name.c_str(),folder_buffer);
-		system(cmd);
-		sprintf(cmd,"tar -cf %s.tar -C %s .",folder_buffer,folder_buffer);
-		system(cmd);
-		sprintf(cmd,"%s/bsc e %s.tar %s.tar.bsc -b64p",current_directory,folder_buffer,folder_buffer);
-		printf("bsc command is %s\n",cmd);
-		system(cmd); **/		
+		spring::bsc::BSC_compress( (string(folder_buffer)+".tar").c_str(), (string(folder_buffer)+".tar.bsc").c_str() );	
 	}
-
-
 
 	mkdir("bsc_files",S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	sprintf(cmd,"mv *.bsc bsc_files");

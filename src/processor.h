@@ -54,16 +54,15 @@ public:
 //	vector<string> file_list;
 //	vector<string> tmp_list;
 
-	Processor(char *src_fp)
+	Processor(char *src_fp, int _thread_number)
 	{
-		read_src_list(src_fp);
+		read_src_list(src_fp, _thread_number);
 	}
 	~Processor() {}
 	vector<vector<double>> generate_similarity_matrix();
 	vector<string> generate_list();
 private:
-	void read_src_list(char *src_file);
-	void row_computation(vector<vector<double>> &vv, int i);
+	void read_src_list(char *src_file,int thread_number);
 };
 
 

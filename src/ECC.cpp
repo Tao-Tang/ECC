@@ -86,7 +86,7 @@ void compress_mode(int argc, char *argv[], bool compress)
 		n_count++;
 	}	
 	printf("read data\n");
-	Processor processor(src);
+	Processor processor(src,thread_number);
 	printf("calculate distance\n");
 	vector<vector<double>> smatrix = processor.generate_similarity_matrix();
 	vector<string> list = processor.generate_list();
@@ -106,6 +106,7 @@ void compress_mode(int argc, char *argv[], bool compress)
 
 	if(compress)
 	{
+		printf("begin compression\n");
 		Compressor compressor(result_name.c_str(), km.list, km.centroid_ids, km.cluster_ids, km.final_id);	
 		compressor.set_thread_number(thread_number);
 		compressor.compress();			
@@ -115,7 +116,7 @@ void compress_mode(int argc, char *argv[], bool compress)
 	system(cmd);
 	gettimeofday(&end,NULL);
 	timer = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
-	printf("compression takes = %lf ms; %lf min, thread_number = %d\n", timer/1000.0, timer/1000.0/1000.0/60.0,thread_number);		
+	printf("ECC takes = %lf ms; %lf min, thread_number = %d\n", timer/1000.0, timer/1000.0/1000.0/60.0,thread_number);		
 
 }
 

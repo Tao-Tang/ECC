@@ -471,7 +471,7 @@ void hirgc::hirgc_cluster_compress(char *result_folder)
 					if (current_ref_id != i)
 					{
 						sprintf(ref,"%s",genome_list[centroid_list[i]].c_str());
-						printf("thread %d read ref %s\n",tid,ref);
+//						printf("thread %d read ref %s\n",tid,ref);
 						readRefFile(ref);
 						preProcessRef();						
 						current_ref_id = i;
@@ -516,7 +516,7 @@ void hirgc::hirgc_cluster_compress(char *result_folder)
 		{
 			if ( task_count >= start && task_count < end )
 			{
-				printf("compress ref file %d with final ref %d\n", tar_id,final_id);
+	//			printf("compress ref file %d with final ref %d\n", tar_id,final_id);
 				sprintf(tar,"%s",genome_list[tar_id].c_str());
 				readTarFile(tar);
 				sprintf(res, "%s/%s_ref_%s", result_folder, strip_string(genome_list[tar_id].c_str()).c_str(),

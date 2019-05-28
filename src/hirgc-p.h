@@ -68,25 +68,16 @@ class hirgc
 
 
 void clear() { // free
-//	printf("clear 1\n");
-	delete[] meta_data;
-//	printf("clear 2\n");	
+	delete[] meta_data;	
 	delete[] pos_vec;
-//	printf("clear 3\n");	
-	delete[] line_break_vec;
-//	printf("clear 4\n");	
+	delete[] line_break_vec;	
 	delete[] n_vec;
-//	printf("clear 5\n");	
-	delete[] other_char_vec;
-//	printf("clear 6\n");	
-	delete[] tar_seq_code;
-//	printf("clear 7\n");	
-	delete[] ref_seq_code;
-//	printf("clear 8\n");	
-	delete[] loc;
-//	printf("clear 9\n");	
+	delete[] other_char_vec;	
+	delete[] tar_seq_code;	
+	delete[] ref_seq_code;	
+	delete[] loc;	
 	delete[] point;
-	printf("clear finish\n");	
+//	printf("clear finish\n");	
 //	delete[] dismatched_str;
 }
 
