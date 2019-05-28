@@ -9,9 +9,9 @@ A clustering-based reference selection algorithm for reference-based compression
 	make
 	
 ## Clusteinrg and Compression
-	./ECC p -r result_name -s src_list -t thread_number for reference-target pair selectoin
-	./ECC c -r result_name -s src_list -t thread_number for reference-target pair selectoin and compress data via hirgc
-	./ECC d src_file for decompression
+	./ECC p -r result_name -s src_list -t thread_number (for reference-target pair selection)
+	./ECC c -r result_name -s src_list -t thread_number (for reference-target pair selection and compress data via hirgc)
+	./ECC d src_file (for decompression)
 	Examples:
 	./ECC p -r my_archive -s file_list.txt -t 4
 	./ECC p -r my_archive -s file_list.txt -t 4
@@ -20,7 +20,7 @@ A clustering-based reference selection algorithm for reference-based compression
 ## Example
 	cp ECC test
 	./ECC p -r a -s list.txt -t 4
-	nano ECC_a_pair.txt  (in each line, first is the reference, second is target)
+	nano ECC_a_pair.txt  (each line contains two files, first is the reference, second is target)
 	./ECC c -r a -s list.txt -t 4
 	ls -lh ECC_a.tar
 	./ECC d a
