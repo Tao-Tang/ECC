@@ -15,8 +15,8 @@ void compress_mode(int argc, char *argv[], bool compress=true);
 static void show_usage()
 {
 	printf("v2.0 \n"
-		   "./ECC p -r result_name -s src_list -t thread_number for reference-target pair selectoin\n"
-		   "./ECC c -r result_name -s src_list -t thread_number for reference-target pair selectoin and compress data via hirgc\n"
+		   "./ECC p -r result_name -s src_list -t thread_number for reference-target pair selection\n"
+		   "./ECC c -r result_name -s src_list -t thread_number for reference-target pair selection and compress data via hirgc\n"
 		   "./ECC d src_file for decompression\n"
 		   "Examples:\n"
 		   "./ECC p -r my_archive -s file_list.txt -t 4\n"
