@@ -19,6 +19,8 @@ A clustering-based reference selection algorithm for reference-based compression
 
 ## Example
 	cp ECC test
+	./ECC p -r a -s list.txt -t 4
+	nano ECC_a_pair.txt  (in each line, first is the reference, second is target)
 	./ECC c -r a -s list.txt -t 4
 	ls -lh ECC_a.tar
 	./ECC d a
