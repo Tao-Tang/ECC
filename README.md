@@ -7,12 +7,12 @@ A clustering-based reference selection algorithm for reference-based compression
 	./bootstrap.sh
 	./configure
 	make
-	
-## Cluster genome sequences
+## Execution	
+** Cluster genome sequences **
 	./ECC p -r result_name -s src_list -t thread_number (for reference-target pair selection)
-## Cluster and compress genome sequences with hirgc
+** Cluster and compress genome sequences with hirgc **
 	./ECC c -r result_name -s src_list -t thread_number (for reference-target pair selection and compress data via hirgc)
-## Decompress Copmressed file
+** Decompress Copmressed file **
 	./ECC d src_file (for decompression)
 	
 - p for cluster a set of genome sequences
