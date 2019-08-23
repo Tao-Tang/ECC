@@ -8,12 +8,10 @@ A clustering-based reference selection algorithm for reference-based compression
 	./configure
 	make
 ## Execution	
-**Cluster genome sequences**<br/>
-##	./ECC p -r result_name -s src_list -t thread_number (for reference-target pair selection) <br/>
-**Cluster and compress genome sequences with hirgc**<br/>
-##	./ECC c -r result_name -s src_list -t thread_number (for reference-target pair selection and compress data via hirgc) <br/>
-**Decompress Copmressed file**<br/>
-##	./ECC d src_file (for decompression) <br/>
+
+./ECC p -r result_name -s src_list -t thread_number (for reference-target pair selection) <br/>
+./ECC c -r result_name -s src_list -t thread_number (for reference-target pair selection and compress data via hirgc) <br/>
+./ECC d src_file (for decompression) <br/>
 	
 - p for cluster a set of genome sequences
 - c for cluster and compress a set of genome sequences
