@@ -4,6 +4,7 @@ A clustering-based reference selection algorithm for reference-based compression
 ## Download and Compile
 	git clone https://github.com/Tao-Tang/ECC.git
 	cd ECC
+	chmod +x bootstrap.sh
 	./bootstrap.sh
 	./configure
 	make
